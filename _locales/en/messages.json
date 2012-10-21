@@ -1,0 +1,20 @@
+{
+	"ext_name": {
+		"message": "Chrome To Drive"
+	},
+	"ext_description": {
+		"message": "Send files from Chrome directly to your drive!"
+	},
+	"ext_page_action_badge": {
+		"message": "Helper for Google+"
+	},
+	"mnu_upload_to_drive": {
+		"message": "upload to drive"
+	},
+	"default_title": {
+		"message": "Helper for Google+"
+	},
+	"popup_refresh": {
+		"message": "Refresh"
+	}
+}
