@@ -13,77 +13,77 @@ chrome.extension.onMessage.addListener(
 
     if (request.action == "download") {
 
-    	downloadFile(request.url, function(data) {
-    		FILE_TO_DOWLOAD = request.url;
+      downloadFile(request.url, function(data) {
+        FILE_TO_DOWLOAD = request.url;
 
-    		var FILE_DESCRIPTION = 'File:' + request.url + '\nParent:' + document.location;
+        var FILE_DESCRIPTION = 'File:' + request.url + '\nParent:' + document.location;
 
-    		var FILE_NAME = FILE_TO_DOWLOAD.split('/');
-    		FILE_NAME = FILE_NAME[FILE_NAME.length - 1];
-    		FILE_BASE64 = data;
-    		FILE_DATA_MIME_TYPE = getMimeTypeByExtension(FILE_NAME);
+        var FILE_NAME = FILE_TO_DOWLOAD.split('/');
+        FILE_NAME = FILE_NAME[FILE_NAME.length - 1];
+        FILE_BASE64 = data;
+        FILE_DATA_MIME_TYPE = getMimeTypeByExtension(FILE_NAME);
 
-    		insertFileOAuth(FILE_NAME, FILE_BASE64, null, FILE_DATA_MIME_TYPE, request.accessToken, FILE_DESCRIPTION);
+        insertFileOAuth(FILE_NAME, FILE_BASE64, null, FILE_DATA_MIME_TYPE, request.accessToken, FILE_DESCRIPTION);
 
-    	});
+      });
     }
 
 });
 
 function getMimeTypeByExtension(url){
-	var extToMimes = {
-			'img': 'image/jpeg'
-		    , 'png': 'image/png'
-		    , 'jpg': 'image/jpeg'
-		    , 'jpeg': 'image/jpeg'
-		    , 'gif': 'image/gif'
-		    };
+  var extToMimes = {
+      'img': 'image/jpeg'
+        , 'png': 'image/png'
+        , 'jpg': 'image/jpeg'
+        , 'jpeg': 'image/jpeg'
+        , 'gif': 'image/gif'
+        };
 
-	var ext = url.split('.');
-	   ext = ext[ext.length - 1];
+  var ext = url.split('.');
+     ext = ext[ext.length - 1];
 
 
-	ext = ext.toLowerCase();
+  ext = ext.toLowerCase();
 
-	if (extToMimes.hasOwnProperty(ext)) {
+  if (extToMimes.hasOwnProperty(ext)) {
         return extToMimes[ext];
-	}
+  }
 
      return false;
 }
 
 function downloadFile(url, callback) {
 
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', url, true);
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
 
-	xhr.responseType = 'arraybuffer';
+  xhr.responseType = 'arraybuffer';
 
-	xhr.onload = function(e) {
-		if (this.status == 200) {
-			var uInt8Array = new Uint8Array(this.response);
-			var i = uInt8Array.length;
-			var binaryString = new Array(i);
-			while (i--) {
-				binaryString[i] = String.fromCharCode(uInt8Array[i]);
-			}
-			var data = binaryString.join('');
+  xhr.onload = function(e) {
+    if (this.status == 200) {
+      var uInt8Array = new Uint8Array(this.response);
+      var i = uInt8Array.length;
+      var binaryString = new Array(i);
+      while (i--) {
+        binaryString[i] = String.fromCharCode(uInt8Array[i]);
+      }
+      var data = binaryString.join('');
 
-			var base64 = window.btoa(data);
+      var base64 = window.btoa(data);
 
-			callback(base64);
-		}
-	};
+      callback(base64);
+    }
+  };
 
-	xhr.send();
+  xhr.send();
 }
 
 
 function insertFileOAuth(fileDataName, fileBase64Data, fileDataType, contentMimeType, oauthToken, fileDescription, callback) {
-	console.log('insertFileOAuth', fileDataName, 'fileBase64Data', fileDataType, contentMimeType, oauthToken, fileDescription, callback);
-	const boundary = '-------314159265358979323846';
-	const delimiter = "\r\n--" + boundary + "\r\n";
-	const close_delim = "\r\n--" + boundary + "--";
+  console.log('insertFileOAuth', fileDataName, 'fileBase64Data', fileDataType, contentMimeType, oauthToken, fileDescription, callback);
+  var boundary = '-------314159265358979323846';
+  var delimiter = "\r\n--" + boundary + "\r\n";
+  var close_delim = "\r\n--" + boundary + "--";
 
   var contentType = fileDataType || 'application/octet-stream';
   var metadata = {
@@ -92,7 +92,6 @@ function insertFileOAuth(fileDataName, fileBase64Data, fileDataType, contentMime
     'mimeType': contentMimeType
   };
 
-//  var base64Data = btoa(reader.result);
   var multipartRequestBody =
       delimiter +
       'Content-Type: application/json\r\n\r\n' +
@@ -109,20 +108,15 @@ function insertFileOAuth(fileDataName, fileBase64Data, fileDataType, contentMime
   xhr.open('POST', 'https://www.googleapis.com/upload/drive/v2/files', false);
   xhr.setRequestHeader('Authorization', 'OAuth ' + oauthToken);
   xhr.setRequestHeader('Content-Type', 'multipart/mixed; boundary="' + boundary + '"');
-
-	xhr.onload = function(e) {
-		if (this.status == 200) {
-			console.log('done', this.response);
-		}
-	};
-
-
   xhr.send(multipartRequestBody);
 
+  if (xhr.status == 200 && true /** public */) {
+    var createdFile = JSON.parse(xhr.response);
 
-
-};
-
-
-
-
+    var xhrPerm = new XMLHttpRequest();
+    xhrPerm.open('POST', 'https://www.googleapis.com/drive/v2/files/' + createdFile.id + '/permissions', false);
+    xhrPerm.setRequestHeader('Authorization', 'OAuth ' + oauthToken);
+    xhrPerm.setRequestHeader('Content-Type', 'application/json');
+    xhrPerm.send(JSON.stringify({"role": "reader","type": "anyone","withLink": true}));
+  }
+}
