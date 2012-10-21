@@ -32,12 +32,12 @@ chrome.extension.onMessage.addListener(
 
 function getMimeTypeByExtension(url){
   var extToMimes = {
-      'img': 'image/jpeg'
-        , 'png': 'image/png'
-        , 'jpg': 'image/jpeg'
-        , 'jpeg': 'image/jpeg'
-        , 'gif': 'image/gif'
-        };
+      'img': 'image/jpeg',
+      'png': 'image/png',
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'gif': 'image/gif'
+  };
 
   var ext = url.split('.');
      ext = ext[ext.length - 1];

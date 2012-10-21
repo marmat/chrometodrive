@@ -7,8 +7,8 @@ var SCOPES = 'https://www.googleapis.com/auth/drive';
    * Called when the client library is loaded to start the auth flow.
    */
   function handleClientLoad() {
-	  console.log('handleClientLoad');
-	  
+    console.log('handleClientLoad');
+
     window.setTimeout(checkAuth, 1);
   }
 
@@ -16,9 +16,9 @@ var SCOPES = 'https://www.googleapis.com/auth/drive';
    * Check if the current user has authorized the application.
    */
   function checkAuth() {
-	  console.log('checkAuth');
-	  
-	  gapi.auth.authorize(
+    console.log('checkAuth');
+
+    gapi.auth.authorize(
         {'client_id': CLIENT_ID, 'scope': SCOPES, 'immediate': true},
         handleAuthResult);
   }
@@ -29,16 +29,16 @@ var SCOPES = 'https://www.googleapis.com/auth/drive';
    * @param {Object} authResult Authorization result.
    */
   function handleAuthResult(authResult) {
-	  console.log('handleAuthResult');
-	  
-	  if (authResult && !authResult.error) {
+    console.log('handleAuthResult');
+
+    if (authResult && !authResult.error) {
 //  // Access token has been successfully retrieved, requests can be sent to the API.
 //  var filePicker = document.getElementById('filePicker');
 //  filePicker.style.visibility = '';
 //  filePicker.onchange = uploadFile;
-	console.log('uploadFile');
-	uploadFile();
-    	
+  console.log('uploadFile');
+  uploadFile();
+
 } else {
   // No access token could be retrieved, force the authorization flow.
   gapi.auth.authorize(
@@ -56,9 +56,9 @@ var SCOPES = 'https://www.googleapis.com/auth/drive';
     gapi.client.load('drive', 'v2', function() {
 //      var file = evt.target.files[0];
       //insertFile(file);
-      
+
       insertFile('red_dot.png', 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==', null, 'image/png');
-      
+
     });
   }
 
@@ -71,7 +71,7 @@ var SCOPES = 'https://www.googleapis.com/auth/drive';
 //  function insertFile(fileData, callback) {
   function insertFile(fileDataName, fileBase64Data, fileDataType, contentMimeType, callback) {
 
-	  const boundary = '-------314159265358979323846';
+    const boundary = '-------314159265358979323846';
 const delimiter = "\r\n--" + boundary + "\r\n";
 const close_delim = "\r\n--" + boundary + "--";
 
@@ -112,7 +112,7 @@ const close_delim = "\r\n--" + boundary + "--";
       request.execute(callback);
 //    }
   }
-  
-  
 
-  
+
+
+
