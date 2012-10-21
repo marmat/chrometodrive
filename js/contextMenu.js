@@ -30,8 +30,6 @@ function removeContextMenu() {
 }
 
 function onClickHandler(info, tab) {
-  console.log('onClickHandler', info, tab);
-
   googleAuth.authorize(function() {
       // Ready for action
       chrome.tabs.sendMessage(tab.id, {action: "download", url: info.srcUrl, accessToken: googleAuth.getAccessToken()}, function(response) {

@@ -1,38 +1,24 @@
-console.log('injectDriveUploader');
-
-var FILE_TO_DOWLOAD = '';
-var FILE_BASE64 = '';
-
-
 chrome.extension.onMessage.addListener(
   function(request, sender, sendResponse) {
-    console.log(sender.tab ?
-                "from a content script:" + sender.tab.url :
-                "from the extension");
-
     if (request.action == "download") {
 
       downloadFile(request.url, function(data, mimeType) {
-        FILE_TO_DOWLOAD = request.url;
+        var fileToDownload = request.url;
+        var description = 'File:' + request.url + '\nParent:' + document.location;
 
-        var FILE_DESCRIPTION = 'File:' + request.url + '\nParent:' + document.location;
+        var fileName = fileToDownload.split('/');
+        fileName = fileName[fileName.length - 1];
+        var base64 = data;
 
-        var FILE_NAME = FILE_TO_DOWLOAD.split('/');
-        FILE_NAME = FILE_NAME[FILE_NAME.length - 1];
-        FILE_BASE64 = data;
-
-        insertFileOAuth(FILE_NAME, FILE_BASE64, null, mimeType, request.accessToken, FILE_DESCRIPTION);
-
+        insertFileOAuth(fileName, base64, null, mimeType, request.accessToken, description);
       });
     }
-
 });
 
 function downloadFile(url, callback) {
 
   var xhr = new XMLHttpRequest();
   xhr.open('GET', url, true);
-
   xhr.responseType = 'arraybuffer';
 
   xhr.onload = function(e) {
