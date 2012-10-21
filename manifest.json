@@ -1,19 +1,33 @@
 {
-  "name": "Chrome To Drive",
+  "name": "__MSG_ext_name__",
   "version": "1",
   "manifest_version": 2,
-  "description": "Send files from Chrome directly to your drive!",
+  "default_locale": "en",
+  "description": "__MSG_ext_description__",
   "icons": {
     "16": "icon_16.png",
     "48": "icon_48.png",
     "128": "icon_128.png"
-  },
+  }
+ , "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["js/injectDriveUploader.js"]
+	},
+	  {
+    "matches": ["http://www.google.com/robots.txt*"],
+    "js": ["oauth2/oauth2_inject.js"],
+    "run_at": "document_start"
+  }
+  ],  
   "background": {
-    "scripts": [
-      "background.js"
-    ]
+	"page": "background.html"
   },
   "permissions": [
     "contextMenus"
+    , "tabs"
+    , "https://accounts.google.com/o/oauth2/token"
+    , "http://www.google.com/robots.txt"
+    , "https://www.googleapis.com/"
   ]
 }
