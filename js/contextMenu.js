@@ -36,32 +36,32 @@ function onClickHandler(info, tab) {
 
 	console.log('onClickHandler', info, tab);
 
-	
+
 	googleAuth.authorize(function() {
 		  // Ready for action
-		  chrome.tabs.sendMessage(tab.id, {action: "download", url: info.srcUrl}, function(response) {
+		  chrome.tabs.sendMessage(tab.id, {action: "download", url: info.srcUrl, token: googleAuth.getAccessToken()}, function(response) {
 			    console.log(response);
-			  });	
+			  });
 	});
-	
 
-	
+
+
 
 //	requestContent('/js/fileDownloader.js', function(code) {
 //		console.log('requestContent', code);
 //		chrome.tabs.executeScript(tab.id, {code: code});
 //
 //	});
-	
 
-	  
-	  
+
+
+
 //	downloadFile(info.srcUrl, 'image/png', function(data) {
-//		
+//
 //		console.log('callback', data);
-//		
+//
 //	});
-	
+
 
 };
 
@@ -71,9 +71,9 @@ function requestContent(url, callback) {
         xhr.onreadystatechange = function(){
             if (xhr.readyState != 4)
                 return;
-            
+
             console.debug(xhr);
-            
+
             if (xhr.response) {
                 console.debug(xhr);
                 callback(xhr.response);
@@ -92,37 +92,37 @@ function requestContent(url, callback) {
 }
 
 function downloadFile(url, mimeType, callback) {
-	
+
 
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', url, true);
 	xhr.responseType = 'blob';
-	
+
 	xhr.onload = function(e) {
-	
+
 	  window.webkitRequestFileSystem(TEMPORARY, 1024 * 1024, function(fs) {
 	    fs.root.getFile('image.png', {create: true}, function(fileEntry) {
 	      fileEntry.createWriter(function(writer) {
-	
-	        writer.onwrite = function(e) { 
+
+	        writer.onwrite = function(e) {
 	        	console.log('onwrite', e);
 	        };
-	        writer.onerror = function(e) { 
+	        writer.onerror = function(e) {
 	        	console.log('onerror', e);
 	        };
-	
+
 	        console.log('xhr.response', xhr.response);
 	        var blob = new Blob([xhr.response], {type: mimeType});
-	
+
 	        writer.write(blob);
-	        
+
 	        console.log('blob', blob);
-	
+
 	      }, onError);
 	    }, onError);
 	  }, onError);
 	};
-	
+
 xhr.send();
 }
 
@@ -145,7 +145,7 @@ xhr.onload = function(e) {
     var data = binaryString.join('');
 
     var base64 = window.btoa(data);
-    
+
     callback(base64);
 //    document.getElementById("myImage").src="data:image/png;base64,"+base64;
   }

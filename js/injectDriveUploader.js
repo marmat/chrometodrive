@@ -5,7 +5,7 @@ console.log('injectDriveUploader');
 //}, function(response) {
 //	console.log(response.farewell);
 //});
-
+var FILE_NAME = 'foo.jpg';
 var FILE_TO_DOWLOAD = '';
 var FILE_BASE64 = '';
 var FILE_DATA_MIME_TYPE = '';
@@ -16,26 +16,18 @@ chrome.extension.onMessage.addListener(
     console.log(sender.tab ?
                 "from a content script:" + sender.tab.url :
                 "from the extension");
-    
+
     if (request.action == "download") {
-    	
+
     	downloadFile(request.url, function(data) {
     		FILE_TO_DOWLOAD = request.url;
     		FILE_BASE64 = data;
     		FILE_DATA_MIME_TYPE = 'image/jpeg';
-    		
-    		(function() {
-    			var ga = document.createElement('script');
-    			ga.type = 'text/javascript';
-    			ga.async = true;
-    			ga.src = 'https://apis.google.com/js/client.js?onload=handleClientLoad';
-    			var s = document.getElementsByTagName('head')[0];
-    			s.parentNode.insertBefore(ga, s);
-    		})();
-    		
+
+        insertFile(FILE_NAME, FILE_BASE64, null, FILE_DATA_MIME_TYPE, request.token);
     	});
     }
-    
+
 });
 
 function downloadFile(url, callback) {
@@ -90,23 +82,23 @@ var SCOPES = 'https://www.googleapis.com/auth/drive';
    *
    * @param {Object} authResult Authorization result.
    */
-  function handleAuthResult(authResult) {
+  function handleAuthResult(authResult, authToken) {
     if (authResult && !authResult.error) {
 //  // Access token has been successfully retrieved, requests can be sent to the API.
 	console.log('uploadFile');
 
     gapi.client.load('drive', 'v2', function() {
-        
+
         //insertFile('red_dot.png', 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==', null, 'image/png');
-        
-    	insertFile(FILE_NAME, FILE_BASE64, null, FILE_DATA_MIME_TYPE);
-        
-        
-        
+
+    	insertFile(FILE_NAME, FILE_BASE64, null, FILE_DATA_MIME_TYPE, authToken);
+
+
+
     });
 
 
-	
+
 } else {
   // No access token could be retrieved, force the authorization flow.
   gapi.auth.authorize(
@@ -122,7 +114,7 @@ var SCOPES = 'https://www.googleapis.com/auth/drive';
    * @param {Function} callback Function to call when the request is complete.
    */
 //  function insertFile(fileData, callback) {
-  function insertFile(fileDataName, fileBase64Data, fileDataType, contentMimeType, callback) {
+  function insertFile(fileDataName, fileBase64Data, fileDataType, contentMimeType, authToken, callback) {
 
 	  const boundary = '-------314159265358979323846';
 const delimiter = "\r\n--" + boundary + "\r\n";
@@ -149,23 +141,14 @@ const close_delim = "\r\n--" + boundary + "--";
       fileBase64Data +
       close_delim;
 
-  var request = gapi.client.request({
-      'path': '/upload/drive/v2/files',
-      'method': 'POST',
-      'params': {'uploadType': 'multipart'},
-      'headers': {
-        'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
-      },
-      'body': multipartRequestBody});
-      if (!callback) {
-        callback = function(file) {
-          console.log(file)
-        };
-      }
-      request.execute(callback);
-//    }
-  }
-  
-  
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', 'https://www.googleapis.com/upload/drive/v2/files', false);
+  xhr.setRequestHeader('Authorization', 'OAuth ' + authToken);
+  xhr.setRequestHeader('Content-Type', 'multipart/mixed; boundary="' + boundary + '"');
+  xhr.send(multipartRequestBody);
 
-  
+  }
+
+
+
+
