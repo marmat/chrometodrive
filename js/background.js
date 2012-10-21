@@ -76,7 +76,13 @@ function storeToDrive(fileName, description, mimeType, data) {
     }));
 
     if (xhrPerm.status == 200) {
-      toast(chrome.i18n.getMessage('upload_success'));
+      toast(chrome.i18n.getMessage('upload_success'),
+          chrome.i18n.getMessage('upload_open'),
+          function() {
+            chrome.tabs.create({
+              url: createdFile.alternateLink
+            });
+          });
     } else {
       toast(chrome.i18n.getMessage('upload_noperm'));
     }
@@ -85,10 +91,14 @@ function storeToDrive(fileName, description, mimeType, data) {
   }
 }
 
-function toast(message) {
-  webkitNotifications
-      .createNotification(null, message, '')
-      .show();
+function toast(message, opt_description, opt_callback) {
+  var notification = webkitNotifications.createNotification(null, message,
+      opt_description ? opt_description : '');
+  if (opt_callback) {
+    notification.onclick = opt_callback;
+  }
+
+  notification.show();
 }
 
 function onClickHandler(info, tab) {

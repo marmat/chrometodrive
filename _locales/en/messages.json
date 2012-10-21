@@ -20,6 +20,9 @@
 	"upload_success": {
 		"message": "File stored on your Drive!"
 	},
+	"upload_open": {
+		"message": "Click to open"
+	},
 	"upload_noperm": {
 		"message": "File stored on your Drive"
 	},
