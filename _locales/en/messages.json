@@ -16,5 +16,14 @@
 	},
 	"popup_refresh": {
 		"message": "Refresh"
+	},
+	"upload_success": {
+		"message": "File stored on your Drive!"
+	},
+	"upload_noperm": {
+		"message": "File stored on your Drive"
+	},
+	"upload_failed": {
+		"message": "File could not be stored on your drive."
 	}
 }

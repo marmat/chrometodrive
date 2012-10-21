@@ -90,8 +90,18 @@ function insertFileOAuth(fileDataName, fileBase64Data, fileDataType,
     if (xhrPerm.status == 200) {
       chrome.extension.sendMessage({
         action: 'toast',
-        message: 'File stored on your Drive!'
+        message: chrome.i18n.getMessage('upload_success')
+      });
+    } else {
+      chrome.extension.sendMessage({
+        action: 'toast',
+        message: chrome.i18n.getMessage('upload_noperm')
       });
     }
+  } else {
+    chrome.extension.sendMessage({
+      action: 'toast',
+      message: chrome.i18n.getMessage('upload_failed')
+    });
   }
 }
