@@ -16,7 +16,7 @@ function showContextMenu() {
     'title' : chrome.i18n.getMessage('mnu_upload_to_drive'),
     'documentUrlPatterns' : [ 'http://*/*', 'https://*/*' ],
     'onclick' : onClickHandler,
-    'contexts' : [ 'link', 'image' ]
+    'contexts' : ['image']
   });
 }
 
