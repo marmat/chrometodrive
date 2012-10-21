@@ -25,6 +25,7 @@
   },
   "permissions": [
     "contextMenus"
+    , "notifications"
     , "tabs"
     , "https://accounts.google.com/o/oauth2/token"
     , "http://www.google.com/robots.txt"

@@ -118,5 +118,12 @@ function insertFileOAuth(fileDataName, fileBase64Data, fileDataType, contentMime
     xhrPerm.setRequestHeader('Authorization', 'OAuth ' + oauthToken);
     xhrPerm.setRequestHeader('Content-Type', 'application/json');
     xhrPerm.send(JSON.stringify({"role": "reader","type": "anyone","withLink": true}));
+
+    if (xhrPerm.status == 200) {
+      chrome.extension.sendMessage({
+        action: 'toast',
+        message: 'File stored on your Drive!'
+      });
+    }
   }
 }
