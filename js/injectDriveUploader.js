@@ -2,7 +2,6 @@ console.log('injectDriveUploader');
 
 var FILE_TO_DOWLOAD = '';
 var FILE_BASE64 = '';
-var FILE_DATA_MIME_TYPE = '';
 
 
 chrome.extension.onMessage.addListener(
@@ -13,7 +12,7 @@ chrome.extension.onMessage.addListener(
 
     if (request.action == "download") {
 
-      downloadFile(request.url, function(data) {
+      downloadFile(request.url, function(data, mimeType) {
         FILE_TO_DOWLOAD = request.url;
 
         var FILE_DESCRIPTION = 'File:' + request.url + '\nParent:' + document.location;
@@ -21,36 +20,13 @@ chrome.extension.onMessage.addListener(
         var FILE_NAME = FILE_TO_DOWLOAD.split('/');
         FILE_NAME = FILE_NAME[FILE_NAME.length - 1];
         FILE_BASE64 = data;
-        FILE_DATA_MIME_TYPE = getMimeTypeByExtension(FILE_NAME);
 
-        insertFileOAuth(FILE_NAME, FILE_BASE64, null, FILE_DATA_MIME_TYPE, request.accessToken, FILE_DESCRIPTION);
+        insertFileOAuth(FILE_NAME, FILE_BASE64, null, mimeType, request.accessToken, FILE_DESCRIPTION);
 
       });
     }
 
 });
-
-function getMimeTypeByExtension(url){
-  var extToMimes = {
-      'img': 'image/jpeg',
-      'png': 'image/png',
-      'jpg': 'image/jpeg',
-      'jpeg': 'image/jpeg',
-      'gif': 'image/gif'
-  };
-
-  var ext = url.split('.');
-     ext = ext[ext.length - 1];
-
-
-  ext = ext.toLowerCase();
-
-  if (extToMimes.hasOwnProperty(ext)) {
-        return extToMimes[ext];
-  }
-
-     return false;
-}
 
 function downloadFile(url, callback) {
 
@@ -71,7 +47,7 @@ function downloadFile(url, callback) {
 
       var base64 = window.btoa(data);
 
-      callback(base64);
+      callback(base64, xhr.getResponseHeader('Content-Type'));
     }
   };
 
