@@ -27,13 +27,77 @@ function maybeRemoveContextMenu() {
   }
 }
 
+
+function storeToDrive(fileName, description, mimeType, data) {
+  var boundary = '-------314159265358979323846';
+  var delimiter = "\r\n--" + boundary + "\r\n";
+  var close_delim = "\r\n--" + boundary + "--";
+
+  var contentType = 'application/octet-stream';
+  var metadata = {
+    'description': description,
+    'title': fileName,
+    'mimeType': mimeType
+  };
+
+  var multipartRequestBody =
+      delimiter +
+      'Content-Type: application/json\r\n\r\n' +
+      JSON.stringify(metadata) +
+      delimiter +
+      'Content-Type: ' + contentType + '\r\n' +
+      'Content-Transfer-Encoding: base64\r\n' +
+      '\r\n' +
+      data +
+      close_delim;
+
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', 'https://www.googleapis.com/upload/drive/v2/files', false);
+  xhr.setRequestHeader('Authorization', 'OAuth ' +
+      localStorage.c2d_accessToken);
+  xhr.setRequestHeader('Content-Type', 'multipart/mixed; boundary="' +
+      boundary + '"');
+  xhr.send(multipartRequestBody);
+
+  if (xhr.status == 200) {
+    var createdFile = JSON.parse(xhr.response);
+
+    var xhrPerm = new XMLHttpRequest();
+    xhrPerm.open('POST', 'https://www.googleapis.com/drive/v2/files/' +
+        createdFile.id + '/permissions', false);
+    xhrPerm.setRequestHeader('Authorization', 'OAuth ' +
+        localStorage.c2d_accessToken);
+    xhrPerm.setRequestHeader('Content-Type', 'application/json');
+    xhrPerm.send(JSON.stringify({
+      role: 'reader',
+      type: 'anyone',
+      withLink: true
+    }));
+
+    if (xhrPerm.status == 200) {
+      toast(chrome.i18n.getMessage('upload_success'));
+    } else {
+      toast(chrome.i18n.getMessage('upload_noperm'));
+    }
+  } else {
+    toast(chrome.i18n.getMessage('upload_failed'));
+  }
+}
+
+function toast(message) {
+  webkitNotifications
+      .createNotification(null, message, '')
+      .show();
+}
+
 function onClickHandler(info, tab) {
   googleAuth.authorize(function() {
+      localStorage.c2d_accessToken = googleAuth.getAccessToken();
       // Ready for action
       chrome.tabs.sendMessage(tab.id, {
           action: 'download',
-          url: info.srcUrl,
-          accessToken: googleAuth.getAccessToken()
+          url: info.srcUrl
         });
   });
 }
@@ -41,11 +105,12 @@ function onClickHandler(info, tab) {
 function onMessageHandler(request, sender, sendResponse) {
   switch (request.action) {
     case 'toast':
-      webkitNotifications
-          .createNotification(null, request.message, '')
-          .show();
+      toast(request.message);
       break;
-      // TODO: Add handler for uploading files from the background page
+    case 'store':
+      storeToDrive(request.fileName, request.description, request.mimeType,
+          request.data);
+      break;
   }
 }
 

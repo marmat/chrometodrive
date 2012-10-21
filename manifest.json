@@ -21,7 +21,10 @@
     }
   ],
   "background": {
-	"page": "background.html"
+    "scripts": [
+      "oauth2/oauth2.js",
+      "js/background.js"
+    ]
   },
   "permissions": [
     "contextMenus"
