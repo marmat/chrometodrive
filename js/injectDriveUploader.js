@@ -1,22 +1,23 @@
 chrome.extension.onMessage.addListener(
   function(request, sender, sendResponse) {
-    if (request.action == "download") {
+    if (request.action == 'download') {
 
       downloadFile(request.url, function(data, mimeType) {
         var fileToDownload = request.url;
-        var description = 'File:' + request.url + '\nParent:' + document.location;
+        var description = 'File:' + request.url + '\nParent:' +
+            document.location;
 
         var fileName = fileToDownload.split('/');
         fileName = fileName[fileName.length - 1];
         var base64 = data;
 
-        insertFileOAuth(fileName, base64, null, mimeType, request.accessToken, description);
+        insertFileOAuth(fileName, base64, null, mimeType, request.accessToken,
+            description);
       });
     }
 });
 
 function downloadFile(url, callback) {
-
   var xhr = new XMLHttpRequest();
   xhr.open('GET', url, true);
   xhr.responseType = 'arraybuffer';
@@ -30,7 +31,6 @@ function downloadFile(url, callback) {
         binaryString[i] = String.fromCharCode(uInt8Array[i]);
       }
       var data = binaryString.join('');
-
       var base64 = window.btoa(data);
 
       callback(base64, xhr.getResponseHeader('Content-Type'));
@@ -41,8 +41,8 @@ function downloadFile(url, callback) {
 }
 
 
-function insertFileOAuth(fileDataName, fileBase64Data, fileDataType, contentMimeType, oauthToken, fileDescription, callback) {
-  console.log('insertFileOAuth', fileDataName, 'fileBase64Data', fileDataType, contentMimeType, oauthToken, fileDescription, callback);
+function insertFileOAuth(fileDataName, fileBase64Data, fileDataType,
+    contentMimeType, oauthToken, fileDescription, callback) {
   var boundary = '-------314159265358979323846';
   var delimiter = "\r\n--" + boundary + "\r\n";
   var close_delim = "\r\n--" + boundary + "--";
@@ -69,17 +69,23 @@ function insertFileOAuth(fileDataName, fileBase64Data, fileDataType, contentMime
   var xhr = new XMLHttpRequest();
   xhr.open('POST', 'https://www.googleapis.com/upload/drive/v2/files', false);
   xhr.setRequestHeader('Authorization', 'OAuth ' + oauthToken);
-  xhr.setRequestHeader('Content-Type', 'multipart/mixed; boundary="' + boundary + '"');
+  xhr.setRequestHeader('Content-Type', 'multipart/mixed; boundary="' +
+      boundary + '"');
   xhr.send(multipartRequestBody);
 
-  if (xhr.status == 200 && true /** public */) {
+  if (xhr.status == 200) {
     var createdFile = JSON.parse(xhr.response);
 
     var xhrPerm = new XMLHttpRequest();
-    xhrPerm.open('POST', 'https://www.googleapis.com/drive/v2/files/' + createdFile.id + '/permissions', false);
+    xhrPerm.open('POST', 'https://www.googleapis.com/drive/v2/files/' +
+        createdFile.id + '/permissions', false);
     xhrPerm.setRequestHeader('Authorization', 'OAuth ' + oauthToken);
     xhrPerm.setRequestHeader('Content-Type', 'application/json');
-    xhrPerm.send(JSON.stringify({"role": "reader","type": "anyone","withLink": true}));
+    xhrPerm.send(JSON.stringify({
+      role: 'reader',
+      type: 'anyone',
+      withLink: true
+    }));
 
     if (xhrPerm.status == 200) {
       chrome.extension.sendMessage({
