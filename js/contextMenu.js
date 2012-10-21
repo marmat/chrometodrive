@@ -39,7 +39,7 @@ function onClickHandler(info, tab) {
 
 	googleAuth.authorize(function() {
 		  // Ready for action
-		  chrome.tabs.sendMessage(tab.id, {action: "download", url: info.srcUrl, token: googleAuth.getAccessToken()}, function(response) {
+		  chrome.tabs.sendMessage(tab.id, {action: "download", url: info.srcUrl, accessToken: googleAuth.getAccessToken()}, function(response) {
 			    console.log(response);
 			  });
 	});
