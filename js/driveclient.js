@@ -15,10 +15,7 @@ var DriveClient = function(clientId, clientSecret) {
   this.googleAuth = new OAuth2('google', {
     client_id: clientId,
     client_secret: clientSecret,
-    api_scope: [
-      'https://www.googleapis.com/auth/drive.file',
-      'https://www.googleapis.com/auth/drive'
-    ].join(' ')
+    api_scope: 'https://www.googleapis.com/auth/drive.file'
   });
 
   this.refreshAuthToken_();
