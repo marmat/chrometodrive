@@ -23,9 +23,6 @@
 	"upload_open": {
 		"message": "Click to open"
 	},
-	"upload_noperm": {
-		"message": "File stored on your Drive"
-	},
 	"upload_failed": {
 		"message": "File could not be stored on your drive."
 	}

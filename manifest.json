@@ -15,7 +15,7 @@
       "js": ["js/injectDriveUploader.js"]
 	  },
 	  {
-      "matches": ["http://www.google.com/robots.txt*"],
+      "matches": ["https://plus.martinmatysiak.de/chrometodrive/oauth_redirect*"],
       "js": ["oauth2/oauth2_inject.js"],
       "run_at": "document_start"
     }
@@ -23,16 +23,16 @@
   "background": {
     "scripts": [
       "oauth2/oauth2.js",
+      "js/driveclient.js",
       "js/background.js"
     ]
   },
   "permissions": [
-    "contextMenus"
-    , "notifications"
-    , "tabs"
-    , "https://accounts.google.com/o/oauth2/token"
-    , "http://www.google.com/robots.txt"
-    , "https://www.googleapis.com/"
-    , "https://apis.google.com/js/client.js"
+    "contextMenus",
+    "notifications",
+    "tabs",
+    "https://accounts.google.com/o/oauth2/token",
+    "https://plus.martinmatysiak.de/chrometodrive/oauth_redirect",
+    "https://www.googleapis.com/"
   ]
 }

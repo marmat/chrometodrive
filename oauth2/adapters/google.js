@@ -12,7 +12,7 @@ OAuth2.adapter('google', {
   },
 
   redirectURL: function(config) {
-    return 'http://www.google.com/robots.txt';
+    return 'https://plus.martinmatysiak.de/chrometodrive/oauth_redirect';
   },
 
   parseAuthorizationCode: function(url) {
