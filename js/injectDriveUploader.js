@@ -4,8 +4,9 @@ chrome.extension.onMessage.addListener(
 
       downloadFile(request.url, function(data, mimeType) {
         var fileToDownload = request.url;
-        var description = 'File:' + request.url + '\nParent:' +
-            document.location;
+        var description = [chrome.i18n.getMessage('desc_source'), ': ',
+            request.url, '\n', chrome.i18n.getMessage('desc_parent'), ': ',
+            document.location].join('');
 
         var fileName = fileToDownload.split('/');
         fileName = fileName[fileName.length - 1];

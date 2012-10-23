@@ -16,5 +16,11 @@
 	},
 	"upload_failed": {
 		"message": "File could not be stored."
+	},
+	"desc_source": {
+		"message": "Source"
+	},
+	"desc_parent": {
+		"message": "Seen on"
 	}
 }
