@@ -166,9 +166,9 @@ DriveClient.prototype.permissionsInsertInternal_ = function(fileId, permissions,
  * @param {string} description A description for the file.
  * @param {string} mimeType MIME-Type of the file.
  * @param {string} data Base64 encoded data.
- * @param {function(?string)=} opt_callback If set, this method will be called
- *    with the results of this action. If insert succeeded, the first parameter
- *    will be the fileId. Otherwise null will be passed.
+ * @param {function(boolean, Object)=} opt_callback If set, this method will be
+ *    called (a boolean indicating success and the response object returned by
+ *    the drive API if it succeeded).
  */
 DriveClient.prototype.filesInsert = function(fileName, description, mimeType,
     data, opt_callback) {
