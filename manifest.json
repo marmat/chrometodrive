@@ -1,11 +1,11 @@
 {
   "name": "__MSG_ext_name__",
-  "version": "1",
+  "version": "0.1",
   "manifest_version": 2,
   "default_locale": "en",
   "description": "__MSG_ext_description__",
   "icons": {
-    "16": "icon_16.png",
+    "16": "drive16.png", // used for context menu item
     "48": "icon_48.png",
     "128": "icon_128.png"
   },
@@ -34,5 +34,8 @@
     "https://accounts.google.com/o/oauth2/token",
     "https://plus.martinmatysiak.de/chrometodrive/oauth_redirect",
     "https://www.googleapis.com/"
+  ],
+  "web_accessible_resources": [
+    "drive32.png"
   ]
 }

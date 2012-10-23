@@ -1,29 +1,20 @@
 {
 	"ext_name": {
-		"message": "Chrome To Drive"
+		"message": "ChromeToDrive"
 	},
 	"ext_description": {
-		"message": "Send files from Chrome directly to your drive!"
-	},
-	"ext_page_action_badge": {
-		"message": "Helper for Google+"
+		"message": "Send files from Chrome directly to your Google Drive™!"
 	},
 	"mnu_upload_to_drive": {
-		"message": "Upload to Drive"
-	},
-	"default_title": {
-		"message": "Helper for Google+"
-	},
-	"popup_refresh": {
-		"message": "Refresh"
+		"message": "Store on Google Drive"
 	},
 	"upload_success": {
-		"message": "File stored on your Drive!"
+		"message": "File successfully stored!"
 	},
 	"upload_open": {
 		"message": "Click to open"
 	},
 	"upload_failed": {
-		"message": "File could not be stored on your drive."
+		"message": "File could not be stored."
 	}
 }

@@ -57,8 +57,8 @@ Background.prototype.maybeRemoveContextMenu_ = function() {
  *    notification.
  */
 Background.prototype.toast = function(message, opt_description, opt_callback) {
-  var notification = webkitNotifications.createNotification(null, message,
-      opt_description ? opt_description : '');
+  var notification = webkitNotifications.createNotification('drive32.png',
+      message, opt_description ? opt_description : '');
   if (opt_callback) {
     notification.onclick = opt_callback;
   }
