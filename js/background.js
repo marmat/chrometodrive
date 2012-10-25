@@ -11,7 +11,7 @@ var Background = function() {
   this.menuItemId = null;
   this.driveClient = new DriveClient(
       '726644204609-umoqam0qvmpijkaum5id59gq0dkh1qgp.apps.googleusercontent.com',
-      'phen0caOoD80eGY2rnnt2A8Z');
+      'phen0caOoD80eGY2rnnt2A8Z', this.maybeCreateExtensionFolder.bind(this));
 
   if (chrome.contextMenus) {
     this.showContextMenu_();
@@ -19,6 +19,10 @@ var Background = function() {
 
   chrome.extension.onMessage.addListener(this.onMessage.bind(this));
 };
+
+
+/** @type {string} */
+Background.prototype.FOLDER_NAME = chrome.i18n.getMessage('ext_name');
 
 
 /**
@@ -45,6 +49,46 @@ Background.prototype.maybeRemoveContextMenu_ = function() {
     chrome.contextMenus.remove(this.menuItemId);
     this.menuItemId = null;
   }
+};
+
+
+/**
+ * If this extension does not have its own folder yet, create one.
+ */
+Background.prototype.maybeCreateExtensionFolder = function() {
+  if (!!localStorage.folderId) {
+    // No action necessary if we already have a folder.
+    return;
+  }
+
+  var createFolderCallback = function(success, response) {
+    if (success) {
+      localStorage.folderId = response.id;
+    } else {
+      console.warn('Couldn\'t create folder. Storing files in root.');
+      delete localStorage.folderId;
+    }
+  };
+
+  var listFilesCallback = function(result) {
+    console.dir(result);
+    if (result === null || result.items.length === 0) {
+      console.log('No available folder. Creating new one.');
+      this.driveClient.filesInsert(this.FOLDER_NAME, '',
+          this.driveClient.DRIVE_FOLDER_MIME_TYPE, '',
+          createFolderCallback.bind(this));
+    } else {
+      localStorage.folderId = result.items[0].id;
+    }
+  };
+
+  // Check if a ChromeToDrive folder already exists.
+  // NOTE: since we're acting in a limited scope, only files created by this
+  // extension are accessible, thus we can simply search for _all_ folders in
+  // the drive (folders not by this extension won't be returned).
+  this.driveClient.filesList('trashed = false and mimeType = \'' +
+      this.driveClient.DRIVE_FOLDER_MIME_TYPE + '\'',
+      listFilesCallback.bind(this));
 };
 
 

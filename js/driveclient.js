@@ -9,21 +9,28 @@
  * @author kaktus621@gmail.com (Martin Matysiak)
  * @param {string} clientId The clientId to use.
  * @param {string} clientSecret The clientSecret to use.
+ * @param {function=} opt_readyCallback Will be called once the user has gone
+ *    through the OAuth flow.
  * @constructor
  */
-var DriveClient = function(clientId, clientSecret) {
+var DriveClient = function(clientId, clientSecret, opt_readyCallback) {
   this.googleAuth = new OAuth2('google', {
     client_id: clientId,
     client_secret: clientSecret,
     api_scope: 'https://www.googleapis.com/auth/drive.file'
   });
 
-  this.refreshAuthToken_();
+  this.refreshAuthToken_(opt_readyCallback);
 };
 
 
 /** @type {string} */
 DriveClient.prototype.MULTIPART_BOUNDARY = '-------314159265358979323846';
+
+
+/** @type {string} */
+DriveClient.prototype.DRIVE_FOLDER_MIME_TYPE =
+    'application/vnd.google-apps.folder';
 
 
 /**
@@ -85,9 +92,9 @@ DriveClient.prototype.createMultipartBody_ = function(parts) {
  * @param {string} description A description for the file.
  * @param {string} mimeType MIME-Type of the file.
  * @param {string} data Base64 encoded data.
- * @param {function(?string)=} opt_callback If set, this method will be called
- *    with the results of this action. If insert succeeded, the first parameter
- *    will be the fileId. Otherwise null will be passed.
+ * @param {function(boolean, Object)=} opt_callback If set, this method will be
+ *    called with the results of this action. The first parameter indicates
+ *    success, the second one will contain the result object if it succeeded.
  * @private
  */
 DriveClient.prototype.filesInsertInternal_ = function(fileName, description,
@@ -127,6 +134,22 @@ DriveClient.prototype.filesInsertInternal_ = function(fileName, description,
     console.log(xhr.response);
     opt_callback(false);
   }
+};
+
+
+/**
+ * Runs a files.list query.
+ * @param {string} query The query to perform.
+ * @param {function(Object)} callback The method which will receive the
+ *    query results.
+ * @private
+ */
+DriveClient.prototype.filesListInternal_ = function(query, callback) {
+  var xhr = this.createdAuthenticatedRequest_('GET',
+      'https://www.googleapis.com/drive/v2/files?q=' + query, false);
+  xhr.send();
+
+  callback(xhr.status === 200 ? JSON.parse(xhr.response) : null);
 };
 
 
@@ -171,6 +194,16 @@ DriveClient.prototype.filesInsert = function(fileName, description, mimeType,
     data, opt_callback) {
   this.refreshAuthToken_(this.filesInsertInternal_.bind(this, fileName,
       description, mimeType, data, opt_callback));
+};
+
+
+/**
+ * Gets a fresh token and runs a files.list query.
+ * @param {string} query The query to perform.
+ * @param {function} callback The method which will receive the query results.
+ */
+DriveClient.prototype.filesList = function(query, callback) {
+  this.refreshAuthToken_(this.filesListInternal_.bind(this, query, callback));
 };
 
 
