@@ -1,26 +1,26 @@
 chrome.extension.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    if (request.action == 'download') {
+    function(request, sender, sendResponse) {
+      if (request.action == 'download') {
 
-      downloadFile(request.url, function(data, mimeType) {
-        var fileToDownload = request.url;
-        var description = [chrome.i18n.getMessage('desc_source'), ': ',
-            request.url, '\n', chrome.i18n.getMessage('desc_parent'), ': ',
-            document.location].join('');
+        downloadFile(request.url, function(data, mimeType) {
+          var fileToDownload = request.url;
+          var description = [chrome.i18n.getMessage('desc_source'), ': ',
+                request.url, '\n', chrome.i18n.getMessage('desc_parent'), ': ',
+                document.location].join('');
 
-        var fileName = fileToDownload.split('/');
-        fileName = fileName[fileName.length - 1];
+          var fileName = fileToDownload.split('/');
+          fileName = fileName[fileName.length - 1];
 
-        chrome.extension.sendMessage({
-          action: 'store',
-          fileName: fileName,
-          description: description,
-          mimeType: mimeType,
-          data: data
+          chrome.extension.sendMessage({
+            action: 'store',
+            fileName: fileName,
+            description: description,
+            mimeType: mimeType,
+            data: data
+          });
         });
-      });
-    }
-});
+      }
+    });
 
 function downloadFile(url, callback) {
   var xhr = new XMLHttpRequest();
