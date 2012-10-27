@@ -88,22 +88,16 @@ DriveClient.prototype.createMultipartBody_ = function(parts) {
 
 /**
  * Inserts a new file into the user's drive.
- * @param {string} fileName The file's name.
- * @param {string} description A description for the file.
- * @param {string} mimeType MIME-Type of the file.
+ * @param {Object.<string, string>} metadata An object containing optional
+ *    properties for the request body, specified in the Drive API reference.
  * @param {string} data Base64 encoded data.
  * @param {function(boolean, Object)=} opt_callback If set, this method will be
  *    called with the results of this action. The first parameter indicates
  *    success, the second one will contain the result object if it succeeded.
  * @private
  */
-DriveClient.prototype.filesInsertInternal_ = function(fileName, description,
-    mimeType, data, opt_callback) {
-  var metadata = {
-    'description': description,
-    'title': fileName,
-    'mimeType': mimeType
-  };
+DriveClient.prototype.filesInsertInternal_ = function(metadata, data,
+    opt_callback) {
 
   var requestBody = this.createMultipartBody_([
     {
@@ -182,18 +176,16 @@ DriveClient.prototype.permissionsInsertInternal_ = function(fileId, permissions,
 /**
  * Gets a fresh auth token and then tries to insert a new file into the
  * user's drive.
- * @param {string} fileName The file's name.
- * @param {string} description A description for the file.
- * @param {string} mimeType MIME-Type of the file.
+ * @param {Object.<string, string>} metadata An object containing optional
+ *    properties for the request body, specified in the Drive API reference.
  * @param {string} data Base64 encoded data.
  * @param {function(boolean, Object)=} opt_callback If set, this method will be
  *    called (a boolean indicating success and the response object returned by
  *    the drive API if it succeeded).
  */
-DriveClient.prototype.filesInsert = function(fileName, description, mimeType,
-    data, opt_callback) {
-  this.refreshAuthToken_(this.filesInsertInternal_.bind(this, fileName,
-      description, mimeType, data, opt_callback));
+DriveClient.prototype.filesInsert = function(metadata, data, opt_callback) {
+  this.refreshAuthToken_(this.filesInsertInternal_.bind(this, metadata, data,
+      opt_callback));
 };
 
 
