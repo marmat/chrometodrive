@@ -74,9 +74,10 @@ Background.prototype.maybeCreateExtensionFolder = function() {
     console.dir(result);
     if (result === null || result.items.length === 0) {
       console.log('No available folder. Creating new one.');
-      this.driveClient.filesInsert(this.FOLDER_NAME, '',
-          this.driveClient.DRIVE_FOLDER_MIME_TYPE, '',
-          createFolderCallback.bind(this));
+      this.driveClient.filesInsert({
+        title: this.FOLDER_NAME,
+        mimeType: this.driveClient.DRIVE_FOLDER_MIME_TYPE
+      }, '', createFolderCallback.bind(this));
     } else {
       localStorage.folderId = result.items[0].id;
     }
@@ -123,8 +124,20 @@ Background.prototype.onMessage = function(request, sender, opt_callback) {
       this.toast(request.message);
       break;
     case 'store':
-      this.driveClient.filesInsert(request.fileName, request.description,
-          request.mimeType, request.data, this.onUploadComplete.bind(this));
+      var metadata = {
+        title: request.fileName,
+        description: request.description,
+        mimeType: request.mimeType
+      };
+
+      if (localStorage.folderId) {
+        metadata['parents'] = [{
+          id: localStorage.folderId
+        }];
+      }
+
+      this.driveClient.filesInsert(metadata, request.data,
+          this.onUploadComplete.bind(this));
       break;
   }
 };
