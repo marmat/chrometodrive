@@ -20,7 +20,9 @@ var DriveClient = function(clientId, clientSecret, opt_readyCallback) {
     api_scope: 'https://www.googleapis.com/auth/drive.file'
   });
 
-  this.refreshAuthToken_(opt_readyCallback);
+  // There seems to be some weird race condition... wait a bit until
+  // requesting authorization.
+  setTimeout(this.refreshAuthToken_.bind(this, opt_readyCallback), 1000);
 };
 
 
