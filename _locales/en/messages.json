@@ -3,7 +3,7 @@
 		"message": "StoreToDrive"
 	},
 	"ext_description": {
-		"message": "Send files from Chrome directly to your Google Drive™!"
+		"message": "Store files from a webpage directly onto your Google Drive™"
 	},
 	"mnu_upload_to_drive": {
 		"message": "Store on Google Drive"
