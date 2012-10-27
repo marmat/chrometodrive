@@ -26,6 +26,13 @@ Background.prototype.FOLDER_NAME = chrome.i18n.getMessage('ext_name');
 
 
 /**
+ * The duration a toast is displayed, in milliseconds.
+ * @type {number}
+ */
+Background.prototype.TOAST_DURATION = 5000;
+
+
+/**
  * Registers a new context menu item for images.
  * @private
  */
@@ -109,6 +116,10 @@ Background.prototype.toast = function(message, opt_description, opt_callback) {
   }
 
   notification.show();
+
+  setTimeout(function() {
+    notification.cancel();
+  }, this.TOAST_DURATION);
 };
 
 
